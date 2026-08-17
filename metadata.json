@@ -1,0 +1,6 @@
+{
+  "name": "Posify EasyPOS - Web Admin",
+  "description": "Multi-Platform POS Web Admin Dashboard & Executive Management System dengan otorisasi RBAC + ABAC (CASL), manajemen stok atomic, analitik profit, dan ekspor laporan.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
