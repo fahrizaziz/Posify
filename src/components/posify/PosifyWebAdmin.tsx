@@ -8,7 +8,7 @@ import { TransactionsModule } from './TransactionsModule';
 import { AnalyticsModule } from './AnalyticsModule';
 import { UserManagementModule } from './UserManagementModule';
 import { AuthModal } from './AuthModal';
-import { LoginPage } from './LoginPage';
+import { useAuthStore } from '../../store/authStore';
 import { 
   LayoutDashboard, 
   Package, 
@@ -32,8 +32,8 @@ export type ThemeMode = 'light' | 'dark' | 'system';
 export const PosifyWebAdmin: React.FC = () => {
   // Global Posify State
   const [users, setUsers] = useState<User[]>(SEED_USERS);
-  const [currentUser, setCurrentUser] = useState<User>(SEED_USERS[0]); // Default OWNER
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const currentUser = useAuthStore((state) => state.user) || SEED_USERS[0];
+  const logout = useAuthStore((state) => state.logout);
   const [categories, setCategories] = useState<Category[]>(SEED_CATEGORIES);
   const [products, setProducts] = useState<Product[]>(SEED_PRODUCTS);
   const [transactions, setTransactions] = useState<Transaction[]>(SEED_TRANSACTIONS);
@@ -130,19 +130,17 @@ export const PosifyWebAdmin: React.FC = () => {
   };
 
   const handleRoleSwitch = (newRole: UserRole) => {
-    const targetUser = users.find(u => u.role === newRole) || currentUser;
-    setCurrentUser({ ...targetUser, role: newRole });
-    showToast(`Role: ${newRole} (${targetUser.name})`, 'success');
+    // Cannot easily switch role if role is from JWT, but we'll mock it for UI purposes if needed.
+    // For now, we'll keep the toast to simulate it.
+    showToast(`Role change not supported in JWT mode. Target: ${newRole}`, 'warn');
   };
 
   const handleLogin = (user: User, token: string) => {
-    setCurrentUser(user);
-    setIsLoggedIn(true);
-    showToast(`${t.toastLoginSuccess} ${user.name} [Role: ${user.role}]`, 'success');
+    // Managed by Router now
   };
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
+    logout();
     showToast(t.toastLoggedOut, 'warn');
   };
 
@@ -254,20 +252,7 @@ export const PosifyWebAdmin: React.FC = () => {
     showToast(resolvedLang === 'id' ? `Forced Password Reset dikirim untuk User ID: ${userId}` : `Forced Password Reset sent for User ID: ${userId}`);
   };
 
-  if (!isLoggedIn) {
-    return (
-      <LoginPage
-        onLogin={handleLogin}
-        allUsers={users}
-        themeMode={themeMode}
-        onThemeChange={handleThemeChange}
-        isResolvedDark={isResolvedDark}
-        langMode={langMode}
-        resolvedLang={resolvedLang}
-        onLangModeChange={handleLangModeChange}
-      />
-    );
-  }
+  // Removed the local !isLoggedIn check since ProtectedRoute handles it
 
   return (
     <div className={`min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black transition-colors duration-200 ${isResolvedDark ? 'dark' : ''}`}>

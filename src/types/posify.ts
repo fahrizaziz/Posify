@@ -1,7 +1,7 @@
 export type UserRole = 'OWNER' | 'MANAGER' | 'CASHIER';
 
 export interface User {
-  id: string;
+  id: string | number;
   name: string;
   email: string;
   role: UserRole;
@@ -13,7 +13,7 @@ export interface User {
 }
 
 export interface Category {
-  id: string;
+  id: string | number;
   name: string;
   slug: string;
   color: string;
@@ -22,23 +22,23 @@ export interface Category {
 }
 
 export interface ProductVariant {
-  id: string;
+  id: string | number;
   name: string;
   priceAdjustment: number;
 }
 
 export interface ProductVariantGroup {
-  id: string;
+  id: string | number;
   title: string; // e.g. "Ukuran", "Topping Tambahan"
   options: ProductVariant[];
 }
 
 export interface Product {
-  id: string;
+  id: string | number;
   sku: string;
   barcode: string;
   name: string;
-  categoryId: string;
+  categoryId: string | number;
   hppPrice: number; // Harga Modal (HPP)
   sellPrice: number; // Harga Jual
   stock: number;
@@ -50,8 +50,8 @@ export interface Product {
 }
 
 export interface StockAdjustment {
-  id: string;
-  productId: string;
+  id: string | number;
+  productId: string | number;
   productName: string;
   oldStock: number;
   newStock: number;
@@ -69,7 +69,7 @@ export interface CartItemVariant {
 }
 
 export interface OrderItem {
-  productId: string;
+  productId: string | number;
   sku: string;
   name: string;
   quantity: number;
@@ -83,10 +83,10 @@ export type TransactionStatus = 'COMPLETED' | 'VOIDED';
 export type PaymentMethod = 'TUNAI' | 'QRIS' | 'TRANSFER';
 
 export interface Transaction {
-  id: string;
+  id: string | number;
   invoiceNumber: string;
   timestamp: string;
-  cashierId: string;
+  cashierId: string | number;
   cashierName: string;
   items: OrderItem[];
   totalHpp: number; // Sum of HPP snapshots * qty
@@ -99,17 +99,17 @@ export interface Transaction {
   change: number;
   status: TransactionStatus;
   voidReason?: string;
-  voidedBy?: string;
+  voidedBy?: string | number;
   voidedByRole?: UserRole;
   voidedAt?: string;
 }
 
 export interface VoidLog {
-  id: string;
-  transactionId: string;
+  id: string | number;
+  transactionId: string | number;
   invoiceNumber: string;
   totalAmount: number;
-  voidedBy: string;
+  voidedBy: string | number;
   voidedByRole: UserRole;
   reason: string;
   timestamp: string;
