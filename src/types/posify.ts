@@ -39,6 +39,7 @@ export interface Product {
   barcode: string;
   name: string;
   categoryId: string | number;
+  outletId: number;
   hppPrice: number; // Harga Modal (HPP)
   sellPrice: number; // Harga Jual
   stock: number;

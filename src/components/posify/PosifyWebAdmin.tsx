@@ -7,8 +7,11 @@ import { InventoryModule } from './InventoryModule';
 import { TransactionsModule } from './TransactionsModule';
 import { AnalyticsModule } from './AnalyticsModule';
 import { UserManagementModule } from './UserManagementModule';
+import { OutletManagementModule } from './OutletManagementModule';
 import { AuthModal } from './AuthModal';
 import { useAuthStore } from '../../store/authStore';
+import { getProducts, createProduct, updateProduct, deleteProduct } from '../../lib/api/products';
+import { getOutlets, Outlet } from '../../lib/api/outlets';
 import { 
   LayoutDashboard, 
   Package, 
@@ -35,9 +38,26 @@ export const PosifyWebAdmin: React.FC = () => {
   const currentUser = useAuthStore((state) => state.user) || SEED_USERS[0];
   const logout = useAuthStore((state) => state.logout);
   const [categories, setCategories] = useState<Category[]>(SEED_CATEGORIES);
-  const [products, setProducts] = useState<Product[]>(SEED_PRODUCTS);
+  const [products, setProducts] = useState<Product[]>([]); // Will load from API
   const [transactions, setTransactions] = useState<Transaction[]>(SEED_TRANSACTIONS);
   const [stockAdjustments, setStockAdjustments] = useState<StockAdjustment[]>(SEED_STOCK_ADJUSTMENTS);
+  const [outlets, setOutlets] = useState<Outlet[]>([]);
+
+  // Fetch initial products and outlets
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [prodData, outData] = await Promise.all([getProducts(), getOutlets()]);
+        setProducts(prodData);
+        setOutlets(outData);
+      } catch (e) {
+        console.error("Gagal memuat data dari API", e);
+      }
+    };
+    if (currentUser) {
+      loadData();
+    }
+  }, [currentUser]);
 
   // Active Tab: 'dashboard' | 'inventory' | 'transactions' | 'analytics' | 'users'
   const [activeTab, setActiveTab] = useState<string>('dashboard');
@@ -145,20 +165,35 @@ export const PosifyWebAdmin: React.FC = () => {
   };
 
   // Product CRUD
-  const handleAddProduct = (newProd: Product) => {
-    setProducts([newProd, ...products]);
-    showToast(resolvedLang === 'id' ? `Produk "${newProd.name}" berhasil ditambahkan!` : `Product "${newProd.name}" successfully added!`);
+  const handleAddProduct = async (formData: FormData) => {
+    try {
+      const newProd = await createProduct(formData);
+      setProducts([newProd, ...products]);
+      showToast(resolvedLang === 'id' ? `Produk "${newProd.name}" berhasil ditambahkan!` : `Product "${newProd.name}" successfully added!`);
+    } catch (err) {
+      showToast('Gagal menambah produk', 'warn');
+    }
   };
 
-  const handleUpdateProduct = (updatedProd: Product) => {
-    setProducts(products.map(p => p.id === updatedProd.id ? updatedProd : p));
-    showToast(resolvedLang === 'id' ? `Produk "${updatedProd.name}" berhasil diperbarui!` : `Product "${updatedProd.name}" successfully updated!`);
+  const handleUpdateProduct = async (id: number | string, formData: FormData) => {
+    try {
+      const updatedProd = await updateProduct(id, formData);
+      setProducts(products.map(p => p.id === updatedProd.id ? updatedProd : p));
+      showToast(resolvedLang === 'id' ? `Produk "${updatedProd.name}" berhasil diperbarui!` : `Product "${updatedProd.name}" successfully updated!`);
+    } catch (err) {
+      showToast('Gagal memperbarui produk', 'warn');
+    }
   };
 
-  const handleDeleteProduct = (productId: string) => {
-    const target = products.find(p => p.id === productId);
-    setProducts(products.filter(p => p.id !== productId));
-    showToast(resolvedLang === 'id' ? `Produk "${target?.name || ''}" telah dihapus` : `Product "${target?.name || ''}" deleted`, 'warn');
+  const handleDeleteProduct = async (productId: string | number) => {
+    try {
+      await deleteProduct(productId);
+      const target = products.find(p => p.id === productId);
+      setProducts(products.filter(p => p.id !== productId));
+      showToast(resolvedLang === 'id' ? `Produk "${target?.name || ''}" telah dihapus` : `Product "${target?.name || ''}" deleted`, 'warn');
+    } catch (err) {
+      showToast('Gagal menghapus produk', 'warn');
+    }
   };
 
   // Category CRUD
@@ -343,18 +378,32 @@ export const PosifyWebAdmin: React.FC = () => {
               <span>{t.analytics}</span>
             </button>
 
-            <button
-              onClick={() => setActiveTab('users')}
-              className={`px-3.5 py-1.5 rounded-full flex items-center gap-1.5 transition-all ${
-                activeTab === 'users'
-                  ? 'bg-black text-white dark:bg-white dark:text-black shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <Users className="w-3.5 h-3.5" />
-              <span>{t.users}</span>
-            </button>
-          </nav>
+              <button
+                onClick={() => setActiveTab('users')}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all ${
+                  activeTab === 'users' 
+                    ? 'bg-black text-white dark:bg-white dark:text-black shadow-md' 
+                    : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white'
+                }`}
+              >
+                <Users className="w-5 h-5" />
+                <span className="font-medium tracking-wide">Tim & Akses</span>
+              </button>
+
+              {currentUser.role === 'OWNER' && (
+                <button
+                  onClick={() => setActiveTab('outlets')}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all ${
+                    activeTab === 'outlets' 
+                      ? 'bg-black text-white dark:bg-white dark:text-black shadow-md' 
+                      : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white'
+                  }`}
+                >
+                  <Globe className="w-5 h-5" />
+                  <span className="font-medium tracking-wide">Manajemen Cabang</span>
+                </button>
+              )}
+            </nav>
 
           {/* Right User Actions */}
           <div className="flex items-center gap-2">
@@ -525,6 +574,7 @@ export const PosifyWebAdmin: React.FC = () => {
             userRole={currentUser.role}
             categories={categories}
             products={products}
+            outlets={outlets}
             stockAdjustments={stockAdjustments}
             onAddProduct={handleAddProduct}
             onUpdateProduct={handleUpdateProduct}
@@ -557,15 +607,21 @@ export const PosifyWebAdmin: React.FC = () => {
         )}
 
         {/* TAB 5: USER MANAGEMENT MODULE (M-6) */}
-        {activeTab === 'users' && (
-          <UserManagementModule
-            userRole={currentUser.role}
-            allUsers={users}
-            onAddUser={handleAddUser}
-            onToggleUserStatus={handleToggleUserStatus}
-            onResetPassword={handleResetPassword}
-          />
-        )}
+          {activeTab === 'outlets' && (
+            <OutletManagementModule
+              userRole={currentUser.role}
+            />
+          )}
+
+          {activeTab === 'users' && (
+            <UserManagementModule 
+              userRole={currentUser.role}
+              allUsers={users}
+              onAddUser={handleAddUser}
+              onToggleUserStatus={handleToggleUserStatus}
+              onResetPassword={handleResetPassword}
+            />
+          )}
 
       </main>
 
