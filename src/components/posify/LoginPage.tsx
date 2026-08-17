@@ -42,9 +42,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({
   resolvedLang,
   onLangModeChange
 }) => {
-  const [selectedUserId, setSelectedUserId] = useState<string>(allUsers[0]?.id || '');
-  const [emailInput, setEmailInput] = useState<string>(allUsers[0]?.email || 'owner@posify.com');
-  const [passwordInput, setPasswordInput] = useState<string>('posify2026!');
+  const [emailInput, setEmailInput] = useState<string>('');
+  const [passwordInput, setPasswordInput] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [selectedOutlet, setSelectedOutlet] = useState<string>('OUTLET-01');
   const [errorMsg, setErrorMsg] = useState<string>('');
@@ -52,14 +51,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({
   const [issuedJwt, setIssuedJwt] = useState<{ accessToken: string; refreshToken: string } | null>(null);
 
   const t = translations[resolvedLang];
-  const selectedUser = allUsers.find(u => u.id === selectedUserId) || allUsers[0];
-
-  const handleSelectPreset = (user: User) => {
-    setSelectedUserId(user.id);
-    setEmailInput(user.email);
-    setPasswordInput('posify2026!');
-    setErrorMsg('');
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -281,34 +272,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
             </div>
           </div>
 
-          {/* Quick Presets Selection */}
-          <div className="pt-2">
-            <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-2">
-              {t.quickDemoAccount}
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              {allUsers.map((u) => (
-                <button
-                  key={u.id}
-                  type="button"
-                  onClick={() => handleSelectPreset(u)}
-                  className={`p-2.5 rounded-xl border text-left transition-all ${
-                    selectedUserId === u.id
-                      ? 'bg-slate-100 dark:bg-slate-800 border-emerald-500 dark:border-emerald-500 ring-1 ring-emerald-500'
-                      : 'bg-white dark:bg-slate-900/40 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-900 dark:text-white truncate">{u.name}</span>
-                    <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded border ${getRoleBadgeColor(u.role)}`}>
-                      {u.role}
-                    </span>
-                  </div>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-1">{u.email}</p>
-                </button>
-              ))}
-            </div>
-          </div>
+
         </div>
 
         {/* Right Login Form Card */}
@@ -331,21 +295,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Selected Preset Info */}
-              <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold text-xs flex items-center justify-center">
-                    {selectedUser.name.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-slate-900 dark:text-white">{selectedUser.name}</p>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400">{selectedUser.email}</p>
-                  </div>
-                </div>
-                <span className={`text-xs font-mono px-2 py-0.5 rounded border ${getRoleBadgeColor(selectedUser.role)}`}>
-                  {selectedUser.role}
-                </span>
-              </div>
 
               {/* Email Input */}
               <div className="space-y-1.5">
