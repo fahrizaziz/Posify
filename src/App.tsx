@@ -4,6 +4,7 @@ import { PosifyWebAdmin } from './components/posify/PosifyWebAdmin';
 import { LoginPage } from './components/posify/LoginPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { useAuthStore } from './store/authStore';
+import { SEED_USERS } from './data/posifySeedData';
 
 export default function App() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -20,7 +21,7 @@ export default function App() {
             ) : (
               <LoginPage 
                 onLogin={(user, token) => setAuth(user, token, '')} 
-                allUsers={[]} // we can ignore dummy list since we use real API now
+                allUsers={SEED_USERS}
                 themeMode="system"
                 onThemeChange={() => {}}
                 isResolvedDark={false}
