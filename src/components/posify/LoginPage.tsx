@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { User } from '../../types/posify';
 import { ThemeMode } from './PosifyWebAdmin';
 import { Language, LanguageMode, translations } from '../../i18n/translations';
+import { api } from '../../lib/api';
 import { 
   Shield, 
   Lock, 
@@ -60,7 +61,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
     setErrorMsg('');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!emailInput.trim() || !passwordInput.trim()) {
       setErrorMsg(resolvedLang === 'id' ? 'Email dan Password wajib diisi.' : 'Email and Password are required.');
@@ -70,11 +71,18 @@ export const LoginPage: React.FC<LoginPageProps> = ({
     setIsLoading(true);
     setErrorMsg('');
 
-    // Simulate API Network & JWT Signing
-    setTimeout(() => {
-      const foundUser = allUsers.find(
-        u => u.id === selectedUserId || u.email.toLowerCase() === emailInput.trim().toLowerCase()
-      ) || {
+    try {
+      const response = await api.post('/auth/login', {
+        email: emailInput.trim(),
+        password: passwordInput.trim()
+      });
+      
+      const data = response.data;
+      setIssuedJwt({ accessToken: data.access_token, refreshToken: data.refresh_token });
+      
+      // Decoded user info can be extracted from JWT or backend response if needed, 
+      // but for now we'll pass a dummy user with the correct email/role based on selectedUser for the UI state.
+      const loggedInUser = {
         id: `usr_${Date.now()}`,
         name: emailInput.split('@')[0],
         email: emailInput,
@@ -84,25 +92,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({
         createdAt: new Date().toISOString()
       };
 
-      const dummyJwt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${btoa(
-        JSON.stringify({
-          sub: foundUser.id,
-          role: foundUser.role,
-          email: foundUser.email,
-          outletId: selectedOutlet,
-          iat: Math.floor(Date.now() / 1000)
-        })
-      )}.signature_posify_sec_key_2026`;
-
-      const dummyRefresh = `refresh_${Math.random().toString(36).substring(2, 15)}_${Date.now()}`;
-
-      setIssuedJwt({ accessToken: dummyJwt, refreshToken: dummyRefresh });
-
       setTimeout(() => {
         setIsLoading(false);
-        onLogin(foundUser, dummyJwt);
+        onLogin(loggedInUser, data.access_token);
       }, 600);
-    }, 500);
+    } catch (err: any) {
+      setIsLoading(false);
+      setErrorMsg(err.response?.data?.message || 'Login failed');
+    }
   };
 
   const getRoleBadgeColor = (role: string) => {
