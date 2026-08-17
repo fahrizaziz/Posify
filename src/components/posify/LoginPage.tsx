@@ -45,7 +45,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({
   const [emailInput, setEmailInput] = useState<string>('');
   const [passwordInput, setPasswordInput] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [selectedOutlet, setSelectedOutlet] = useState<string>('OUTLET-01');
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [issuedJwt, setIssuedJwt] = useState<{ accessToken: string; refreshToken: string } | null>(null);
@@ -78,7 +77,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
         name: emailInput.split('@')[0],
         email: emailInput,
         role: 'OWNER',
-        outletId: selectedOutlet,
+        outletId: null,
         active: true,
         createdAt: new Date().toISOString()
       };
@@ -337,23 +336,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                 </div>
               </div>
 
-              {/* Outlet Selector */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                  <Building2 className="w-3.5 h-3.5 text-slate-400" />
-                  <span>{t.outletLabel}</span>
-                </label>
-                <select
-                  value={selectedOutlet}
-                  onChange={(e) => setSelectedOutlet(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
-                >
-                  <option value="ALL">{t.allOutlets}</option>
-                  <option value="OUTLET-01">{t.centralBranch} (OUTLET-01)</option>
-                  <option value="OUTLET-02">{t.westBranch} (OUTLET-02)</option>
-                  <option value="OUTLET-03">{t.southHub} (OUTLET-03)</option>
-                </select>
-              </div>
+
 
               {/* JWT Simulation Details */}
               {issuedJwt && (
