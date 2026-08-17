@@ -92,15 +92,15 @@ export const InventoryModule: React.FC<InventoryModuleProps> = ({
       setEditingProduct(prod);
       setPName(prod.name);
       setPSku(prod.sku);
-      setPBarcode(prod.barcode);
-      setPCategory(prod.categoryId);
-      setPOutlet(prod.outletId);
-      setPHpp(prod.hppPrice);
-      setPSell(prod.sellPrice);
-      setPStock(prod.stock);
-      setPImg(prod.imageUrl);
+      setPBarcode(prod.barcode || '');
+      setPCategory(prod.categoryId || categories[0]?.id || 'cat-01');
+      setPOutlet(prod.outletId || outlets[0]?.id || 1);
+      setPHpp(prod.hppPrice || 0);
+      setPSell(prod.sellPrice || 0);
+      setPStock(prod.stock || 0);
+      setPImg(prod.imageUrl || null);
       setPImgFile(null);
-      setPStatus(prod.status);
+      setPStatus(prod.status || 'ACTIVE');
       setVariantGroups(prod.variantGroups || []);
     } else {
       setEditingProduct(null);
@@ -135,11 +135,11 @@ export const InventoryModule: React.FC<InventoryModuleProps> = ({
     formData.append('sku', pSku);
     formData.append('barcode', pBarcode);
     formData.append('name', pName);
-    formData.append('categoryId', pCategory.toString());
-    formData.append('outletId', pOutlet.toString());
-    formData.append('hppPrice', pHpp.toString());
-    formData.append('sellPrice', pSell.toString());
-    formData.append('stock', pStock.toString());
+    if (pCategory) formData.append('categoryId', pCategory.toString());
+    if (pOutlet) formData.append('outletId', pOutlet.toString());
+    formData.append('hppPrice', (pHpp || 0).toString());
+    formData.append('sellPrice', (pSell || 0).toString());
+    formData.append('stock', (pStock || 0).toString());
     formData.append('isActive', (pStatus === 'ACTIVE').toString());
     
     if (pImgFile) {
