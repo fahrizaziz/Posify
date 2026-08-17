@@ -105,7 +105,7 @@ export interface Translations {
   productName: string;
   sku: string;
   barcode: string;
-  hppPrice: string;
+  costPrice: string;
   sellPrice: string;
   stock: string;
   minStock: string;
@@ -253,7 +253,7 @@ export const translations: Record<Language, Translations> = {
     productName: 'Nama Produk',
     sku: 'SKU / Barcode',
     barcode: 'Barcode',
-    hppPrice: 'Harga Modal (HPP)',
+    costPrice: 'Harga Modal (HPP)',
     sellPrice: 'Harga Jual',
     stock: 'Jumlah Stok',
     minStock: 'Batas Stok Minimum',
@@ -399,7 +399,7 @@ export const translations: Record<Language, Translations> = {
     productName: 'Product Name',
     sku: 'SKU / Barcode',
     barcode: 'Barcode',
-    hppPrice: 'Cost of Goods (COGS/HPP)',
+    costPrice: 'Cost of Goods (COGS/HPP)',
     sellPrice: 'Selling Price',
     stock: 'Stock Quantity',
     minStock: 'Minimum Alert Threshold',

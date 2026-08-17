@@ -95,7 +95,7 @@ export const InventoryModule: React.FC<InventoryModuleProps> = ({
       setPBarcode(prod.barcode || '');
       setPCategory(prod.categoryId || categories[0]?.id || 'cat-01');
       setPOutlet(prod.outletId || outlets[0]?.id || 1);
-      setPHpp(prod.hppPrice || 0);
+      setPHpp(prod.costPrice || 0);
       setPSell(prod.sellPrice || 0);
       setPStock(prod.stock || 0);
       setPImg(prod.imageUrl || null);
@@ -137,7 +137,7 @@ export const InventoryModule: React.FC<InventoryModuleProps> = ({
     formData.append('name', pName);
     if (pCategory) formData.append('categoryId', pCategory.toString());
     if (pOutlet) formData.append('outletId', pOutlet.toString());
-    formData.append('hppPrice', (pHpp || 0).toString());
+    formData.append('costPrice', (pHpp || 0).toString());
     formData.append('sellPrice', (pSell || 0).toString());
     formData.append('stock', (pStock || 0).toString());
     formData.append('isActive', (pStatus === 'ACTIVE').toString());
@@ -363,7 +363,7 @@ export const InventoryModule: React.FC<InventoryModuleProps> = ({
                         {/* Column 4: HPP (Modal) - OWNER ONLY or Masked */}
                         <td className="py-3.5 px-4 font-mono">
                           {userRole === 'OWNER' ? (
-                            <span className="text-slate-600 dark:text-slate-300">{formatRupiah(prod.hppPrice)}</span>
+                            <span className="text-slate-600 dark:text-slate-300">{formatRupiah(prod.costPrice)}</span>
                           ) : (
                             <span className="text-[10px] text-slate-400 italic">[Disembunyikan]</span>
                           )}

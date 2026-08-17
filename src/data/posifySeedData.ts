@@ -61,7 +61,7 @@ export const SEED_PRODUCTS: Product[] = [
     barcode: '8991001001',
     name: 'Kopi Susu Gula Aren Signature',
     categoryId: 'cat-01',
-    hppPrice: 8500,
+    costPrice: 8500,
     sellPrice: 22000,
     stock: 3, // Low stock <= 5
     minStockAlert: 5,
@@ -93,7 +93,7 @@ export const SEED_PRODUCTS: Product[] = [
     barcode: '8991001002',
     name: 'Americano Double Shot Hot/Iced',
     categoryId: 'cat-01',
-    hppPrice: 6000,
+    costPrice: 6000,
     sellPrice: 18000,
     stock: 42,
     minStockAlert: 5,
@@ -117,7 +117,7 @@ export const SEED_PRODUCTS: Product[] = [
     barcode: '8991001003',
     name: 'Caramel Macchiato Creamy',
     categoryId: 'cat-01',
-    hppPrice: 11000,
+    costPrice: 11000,
     sellPrice: 28000,
     stock: 25,
     minStockAlert: 5,
@@ -131,7 +131,7 @@ export const SEED_PRODUCTS: Product[] = [
     barcode: '8991002001',
     name: 'Matcha Latte Uji Kyoto',
     categoryId: 'cat-02',
-    hppPrice: 10500,
+    costPrice: 10500,
     sellPrice: 25000,
     stock: 18,
     minStockAlert: 5,
@@ -145,7 +145,7 @@ export const SEED_PRODUCTS: Product[] = [
     barcode: '8991002002',
     name: 'Boba Brown Sugar Milk',
     categoryId: 'cat-02',
-    hppPrice: 9000,
+    costPrice: 9000,
     sellPrice: 24000,
     stock: 4, // Low stock <= 5
     minStockAlert: 5,
@@ -159,7 +159,7 @@ export const SEED_PRODUCTS: Product[] = [
     barcode: '8991003001',
     name: 'Nasi Goreng Wagyu Truffle Oil',
     categoryId: 'cat-03',
-    hppPrice: 22000,
+    costPrice: 22000,
     sellPrice: 48000,
     stock: 15,
     minStockAlert: 5,
@@ -173,7 +173,7 @@ export const SEED_PRODUCTS: Product[] = [
     barcode: '8991003002',
     name: 'Spaghetti Carbonara Smoked Beef',
     categoryId: 'cat-03',
-    hppPrice: 18000,
+    costPrice: 18000,
     sellPrice: 38000,
     stock: 22,
     minStockAlert: 5,
@@ -187,7 +187,7 @@ export const SEED_PRODUCTS: Product[] = [
     barcode: '8991004001',
     name: 'Butter Croissant French Bakery',
     categoryId: 'cat-04',
-    hppPrice: 8000,
+    costPrice: 8000,
     sellPrice: 20000,
     stock: 2, // Low stock <= 5
     minStockAlert: 5,
@@ -201,7 +201,7 @@ export const SEED_PRODUCTS: Product[] = [
     barcode: '8991004002',
     name: 'Fudgy Chocolate Brownie Bite',
     categoryId: 'cat-04',
-    hppPrice: 7000,
+    costPrice: 7000,
     sellPrice: 16000,
     stock: 30,
     minStockAlert: 5,
@@ -224,7 +224,7 @@ export const SEED_TRANSACTIONS: Transaction[] = [
         sku: 'SKU-KOP-001',
         name: 'Kopi Susu Gula Aren Signature',
         quantity: 2,
-        hppPriceSnapshot: 8500,
+        costPriceSnapshot: 8500,
         sellPriceSnapshot: 22000,
         variants: [{ groupTitle: 'Ukuran Cup', optionName: 'Large 500ml', priceAdjustment: 4000 }],
         subtotal: 52000
@@ -234,7 +234,7 @@ export const SEED_TRANSACTIONS: Transaction[] = [
         sku: 'SKU-PAS-001',
         name: 'Butter Croissant French Bakery',
         quantity: 1,
-        hppPriceSnapshot: 8000,
+        costPriceSnapshot: 8000,
         sellPriceSnapshot: 20000,
         subtotal: 20000
       }
@@ -261,7 +261,7 @@ export const SEED_TRANSACTIONS: Transaction[] = [
         sku: 'SKU-MAK-001',
         name: 'Nasi Goreng Wagyu Truffle Oil',
         quantity: 1,
-        hppPriceSnapshot: 22000,
+        costPriceSnapshot: 22000,
         sellPriceSnapshot: 48000,
         subtotal: 48000
       },
@@ -270,7 +270,7 @@ export const SEED_TRANSACTIONS: Transaction[] = [
         sku: 'SKU-KOP-002',
         name: 'Americano Double Shot Hot/Iced',
         quantity: 1,
-        hppPriceSnapshot: 6000,
+        costPriceSnapshot: 6000,
         sellPriceSnapshot: 18000,
         subtotal: 18000
       }
@@ -297,7 +297,7 @@ export const SEED_TRANSACTIONS: Transaction[] = [
         sku: 'SKU-NON-001',
         name: 'Matcha Latte Uji Kyoto',
         quantity: 2,
-        hppPriceSnapshot: 10500,
+        costPriceSnapshot: 10500,
         sellPriceSnapshot: 25000,
         subtotal: 50000
       }
@@ -324,7 +324,7 @@ export const SEED_TRANSACTIONS: Transaction[] = [
         sku: 'SKU-NON-002',
         name: 'Boba Brown Sugar Milk',
         quantity: 1,
-        hppPriceSnapshot: 9000,
+        costPriceSnapshot: 9000,
         sellPriceSnapshot: 24000,
         subtotal: 24000
       }
@@ -355,7 +355,7 @@ export const SEED_TRANSACTIONS: Transaction[] = [
         sku: 'SKU-KOP-003',
         name: 'Caramel Macchiato Creamy',
         quantity: 3,
-        hppPriceSnapshot: 11000,
+        costPriceSnapshot: 11000,
         sellPriceSnapshot: 28000,
         subtotal: 84000
       },
@@ -364,7 +364,7 @@ export const SEED_TRANSACTIONS: Transaction[] = [
         sku: 'SKU-MAK-002',
         name: 'Spaghetti Carbonara Smoked Beef',
         quantity: 2,
-        hppPriceSnapshot: 18000,
+        costPriceSnapshot: 18000,
         sellPriceSnapshot: 38000,
         subtotal: 76000
       }

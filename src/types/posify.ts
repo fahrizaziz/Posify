@@ -40,7 +40,7 @@ export interface Product {
   name: string;
   categoryId: string | number;
   outletId: number;
-  hppPrice: number; // Harga Modal (HPP)
+  costPrice: number; // Harga Modal (HPP)
   sellPrice: number; // Harga Jual
   stock: number;
   minStockAlert: number; // default 5
@@ -74,7 +74,7 @@ export interface OrderItem {
   sku: string;
   name: string;
   quantity: number;
-  hppPriceSnapshot: number; // Snapshot HPP at transaction time
+  costPriceSnapshot: number; // Snapshot HPP at transaction time
   sellPriceSnapshot: number; // Snapshot sell price at transaction time
   variants?: CartItemVariant[];
   subtotal: number;
