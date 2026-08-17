@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { UserRole, Category, Product, ProductVariantGroup, StockAdjustment } from '../../types/posify';
 import { Plus, Search, Filter, Edit, Trash2, AlertTriangle, Shield, Check, X, RefreshCw, Barcode, Layers, Package, Tag, ArrowUpDown } from 'lucide-react';
+import { Outlet } from '../../lib/api/outlets';
 
 interface InventoryModuleProps {
   userRole: UserRole;
   categories: Category[];
   products: Product[];
+  outlets: Outlet[];
   stockAdjustments: StockAdjustment[];
-  onAddProduct: (prod: Product) => void;
-  onUpdateProduct: (prod: Product) => void;
-  onDeleteProduct: (productId: string) => void;
+  onAddProduct: (formData: FormData) => void | Promise<void>;
+  onUpdateProduct: (id: string | number, formData: FormData) => void | Promise<void>;
+  onDeleteProduct: (productId: string | number) => void;
   onAddCategory: (cat: Category) => void;
   onUpdateCategory: (cat: Category) => void;
   onDeleteCategory: (catId: string) => void;
@@ -21,6 +23,7 @@ export const InventoryModule: React.FC<InventoryModuleProps> = ({
   userRole,
   categories,
   products,
+  outlets,
   stockAdjustments,
   onAddProduct,
   onUpdateProduct,
@@ -55,10 +58,12 @@ export const InventoryModule: React.FC<InventoryModuleProps> = ({
   const [pSku, setPSku] = useState('');
   const [pBarcode, setPBarcode] = useState('');
   const [pCategory, setPCategory] = useState(categories[0]?.id || 'cat-01');
+  const [pOutlet, setPOutlet] = useState<number>(outlets[0]?.id || 1);
   const [pHpp, setPHpp] = useState<number>(10000);
   const [pSell, setPSell] = useState<number>(25000);
   const [pStock, setPStock] = useState<number>(20);
-  const [pImg, setPImg] = useState('https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&q=80&w=300');
+  const [pImg, setPImg] = useState<string | null>(null);
+  const [pImgFile, setPImgFile] = useState<File | null>(null);
   const [pStatus, setPStatus] = useState<'ACTIVE' | 'INACTIVE'>('ACTIVE');
 
   // Variant Groups Form state
@@ -89,10 +94,12 @@ export const InventoryModule: React.FC<InventoryModuleProps> = ({
       setPSku(prod.sku);
       setPBarcode(prod.barcode);
       setPCategory(prod.categoryId);
+      setPOutlet(prod.outletId);
       setPHpp(prod.hppPrice);
       setPSell(prod.sellPrice);
       setPStock(prod.stock);
       setPImg(prod.imageUrl);
+      setPImgFile(null);
       setPStatus(prod.status);
       setVariantGroups(prod.variantGroups || []);
     } else {
@@ -101,10 +108,12 @@ export const InventoryModule: React.FC<InventoryModuleProps> = ({
       setPSku(`SKU-POS-${Math.floor(100 + Math.random() * 900)}`);
       setPBarcode(`899${Math.floor(1000000 + Math.random() * 9000000)}`);
       setPCategory(categories[0]?.id || 'cat-01');
+      setPOutlet(outlets[0]?.id || 1);
       setPHpp(10000);
       setPSell(25000);
       setPStock(20);
-      setPImg('https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&q=80&w=300');
+      setPImg(null);
+      setPImgFile(null);
       setPStatus('ACTIVE');
       setVariantGroups([
         {
@@ -120,28 +129,27 @@ export const InventoryModule: React.FC<InventoryModuleProps> = ({
     setIsProductModalOpen(true);
   };
 
-  const handleSaveProduct = (e: React.FormEvent) => {
+  const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
-    const productPayload: Product = {
-      id: editingProduct ? editingProduct.id : `prd-${Date.now()}`,
-      sku: pSku,
-      barcode: pBarcode,
-      name: pName,
-      categoryId: pCategory,
-      hppPrice: Number(pHpp),
-      sellPrice: Number(pSell),
-      stock: Number(pStock),
-      minStockAlert: 5,
-      imageUrl: pImg || 'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&q=80&w=300',
-      status: pStatus,
-      variantGroups: variantGroups,
-      createdAt: editingProduct ? editingProduct.createdAt : new Date().toISOString()
-    };
+    const formData = new FormData();
+    formData.append('sku', pSku);
+    formData.append('barcode', pBarcode);
+    formData.append('name', pName);
+    formData.append('categoryId', pCategory.toString());
+    formData.append('outletId', pOutlet.toString());
+    formData.append('hppPrice', pHpp.toString());
+    formData.append('sellPrice', pSell.toString());
+    formData.append('stock', pStock.toString());
+    formData.append('isActive', (pStatus === 'ACTIVE').toString());
+    
+    if (pImgFile) {
+      formData.append('image', pImgFile);
+    }
 
     if (editingProduct) {
-      onUpdateProduct(productPayload);
+      await onUpdateProduct(editingProduct.id, formData);
     } else {
-      onAddProduct(productPayload);
+      await onAddProduct(formData);
     }
     setIsProductModalOpen(false);
   };
@@ -670,17 +678,35 @@ export const InventoryModule: React.FC<InventoryModuleProps> = ({
                     <option value="INACTIVE">INACTIVE (Nonaktif)</option>
                   </select>
                 </div>
+
+                <div>
+                  <label className="block text-[10px] uppercase tracking-widest font-bold text-slate-400 mb-1">
+                    Cabang (Outlet)
+                  </label>
+                  <select
+                    value={pOutlet}
+                    onChange={(e) => setPOutlet(Number(e.target.value))}
+                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                  >
+                    {outlets.map(o => (
+                      <option key={o.id} value={o.id}>{o.name}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <div>
                 <label className="block text-[10px] uppercase tracking-widest font-bold text-slate-400 mb-1">
-                  Image URL
+                  Gambar Produk {editingProduct && <span className="text-slate-400 font-normal lowercase">(kosongkan jika tidak diubah)</span>}
                 </label>
                 <input
-                  type="text"
-                  required
-                  value={pImg}
-                  onChange={(e) => setPImg(e.target.value)}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      setPImgFile(e.target.files[0]);
+                    }
+                  }}
                   className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
                 />
               </div>
