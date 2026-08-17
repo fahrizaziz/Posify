@@ -70,16 +70,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({
       const data = response.data;
       setIssuedJwt({ accessToken: data.access_token, refreshToken: data.refresh_token });
       
-      // Decoded user info can be extracted from JWT or backend response if needed, 
-      // but for now we'll pass a dummy user with the correct email/role based on selectedUser for the UI state.
       const loggedInUser = {
-        id: `usr_${Date.now()}`,
-        name: emailInput.split('@')[0],
-        email: emailInput,
-        role: 'OWNER',
-        outletId: null,
-        active: true,
-        createdAt: new Date().toISOString()
+        ...data.user,
+        // Optional properties the frontend User interface expects that might be missing in backend user:
+        status: data.user.isActive ? 'ACTIVE' : 'INACTIVE',
+        phone: '', // Provide a fallback if backend doesn't have phone
       };
 
       setTimeout(() => {
